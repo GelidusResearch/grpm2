@@ -1,0 +1,55 @@
+sensor:
+  - platform: atm90e32
+    cs_pin: ${main_spi_cs_pin}
+    id: ${main_chip_id}
+    phase_a:
+      voltage:
+        name: ${disp_name} ${main_phase_a_line_name} Volts
+        accuracy_decimals: 2
+      current:
+        name: ${disp_name} ${main_phase_a_ct_name} Amps
+        id: ${main_phase_a_ct_name}Amps
+        accuracy_decimals: 2
+      power:
+        name: ${disp_name} ${main_phase_a_ct_name} Watts
+        id: ${main_phase_a_ct_name}Watts
+        accuracy_decimals: 2
+      gain_voltage: ${main_phase_a_voltage_cal}
+      gain_ct: ${main_phase_a_current_cal}
+    phase_b:
+      voltage:
+        name: ${disp_name} ${main_phase_b_line_name} Volts
+        accuracy_decimals: 2
+      current:
+        name: ${disp_name} ${main_phase_b_ct_name} Amps
+        id: ${main_phase_b_ct_name}Amps
+        accuracy_decimals: 2
+      power:
+        name: ${disp_name} ${main_phase_b_ct_name} Watts
+        id: ${main_phase_b_ct_name}Watts
+        accuracy_decimals: 2
+      gain_voltage: ${main_phase_b_voltage_cal}
+      gain_ct: ${main_phase_b_current_cal}
+    phase_c:
+      voltage:
+        name: ${disp_name} ${main_phase_c_line_name} Volts
+        accuracy_decimals: 2
+      current:
+        name: ${disp_name} ${main_phase_c_ct_name} Amps
+        id: ${main_phase_c_ct_name}Amps
+        accuracy_decimals: 2
+      power:
+        name: ${disp_name} ${main_phase_c_ct_name} Watts
+        id: ${main_phase_c_ct_name}Watts
+        accuracy_decimals: 2
+      gain_voltage: ${main_phase_c_voltage_cal}
+      gain_ct: ${main_phase_c_current_cal}
+    enable_gain_calibration: ${main_enable_gain_calibration}
+    enable_offset_calibration: ${main_enable_offset_calibration}
+    frequency:
+      name: ${disp_name} MainBoard ${main_chip_id} AC Frequency
+    line_frequency: ${line_frequency}
+    gain_pga: ${main_gain_pga}
+    chip_temperature:
+      name: ${disp_name} MainBoard ${main_chip_id} Temp.
+    update_interval: ${update_time}

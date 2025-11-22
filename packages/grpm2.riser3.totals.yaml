@@ -1,0 +1,17 @@
+sensor:    
+  - platform: template
+    name: ${disp_name} Riser3 ${riser3_chip_id} Total Amps
+    id: totalAmps${riser3_chip_id}
+    lambda: return id(${riser3_phase_a_ct_name}Amps).state+id(${riser3_phase_b_ct_name}Amps).state+id(${riser3_phase_c_ct_name}Amps).state;
+    accuracy_decimals: 2    
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}    
+  - platform: template
+    name: ${disp_name} Riser3 ${riser3_chip_id} Total Watts
+    id: totalWatts${riser3_chip_id}
+    lambda: return id(${riser3_phase_a_ct_name}Watts).state+id(${riser3_phase_b_ct_name}Watts).state+id(${riser3_phase_c_ct_name}Watts).state;
+    accuracy_decimals: 2
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}

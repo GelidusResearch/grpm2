@@ -1,0 +1,53 @@
+sensor:
+  - platform: atm90e32
+    cs_pin: ${riser1_spi_cs_pin}
+    id: ${riser1_chip_id}
+    phase_a:
+      voltage:
+        name: ${disp_name} ${riser1_phase_a_line_name} Volts
+        accuracy_decimals: 2
+      current:
+        name: ${disp_name} ${riser1_phase_a_ct_name} Amps
+        id: ${riser1_phase_a_ct_name}Amps
+        accuracy_decimals: 2
+      power:     
+        name: ${disp_name} ${riser1_phase_a_ct_name} Watts
+        id: ${riser1_phase_a_ct_name}Watts
+        accuracy_decimals: 2
+      gain_voltage: ${riser1_phase_a_voltage_cal}
+      gain_ct: ${riser1_phase_a_current_cal}
+    phase_b:
+      voltage:
+        name: ${disp_name} ${riser1_phase_b_line_name} Volts
+        accuracy_decimals: 2
+      current:
+        name: ${disp_name} ${riser1_phase_b_ct_name} Amps
+        id: ${riser1_phase_b_ct_name}Amps
+        accuracy_decimals: 2
+      power:     
+        name: ${disp_name} ${riser1_phase_b_ct_name} Watts
+        id: ${riser1_phase_b_ct_name}Watts
+        accuracy_decimals: 2
+      gain_voltage: ${riser1_phase_b_voltage_cal}
+      gain_ct: ${riser1_phase_b_current_cal}
+    phase_c:
+      voltage:
+        name: ${disp_name} ${riser1_phase_c_line_name} Volts
+        accuracy_decimals: 2
+      current:
+        name: ${disp_name} ${riser1_phase_c_ct_name} Amps
+        id: ${riser1_phase_c_ct_name}Amps
+        accuracy_decimals: 2
+      power:     
+        name: ${disp_name} ${riser1_phase_c_ct_name} Watts
+        id: ${riser1_phase_c_ct_name}Watts
+        accuracy_decimals: 2
+      gain_voltage: ${riser1_phase_c_voltage_cal}
+      gain_ct: ${riser1_phase_c_current_cal}
+    enable_gain_calibration: ${riser1_enable_gain_calibration}
+    enable_offset_calibration: ${riser1_enable_offset_calibration}
+    line_frequency: ${line_frequency}
+    gain_pga: ${riser1_gain_pga}
+    chip_temperature:
+      name: ${disp_name} Riser1 ${riser1_chip_id} Temp.
+    update_interval: ${update_time}

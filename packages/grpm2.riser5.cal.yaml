@@ -1,0 +1,48 @@
+# Details: https://esphome.io/components/sensor/atm90e32.html#calibration
+
+button:
+  - platform: atm90e32
+    id: ${riser5_chip_id}
+    run_offset_calibration:
+      name: "Run ${unit_name} ${riser5_chip_id} Offset Cal"
+    clear_offset_calibration:
+      name: "Clear ${unit_name} ${riser5_chip_id} Offset Cal"
+    run_power_offset_calibration:
+      name: "Run ${unit_name} ${riser5_chip_id} Power Offset Cal"
+    clear_power_offset_calibration:
+      name: "Clear ${unit_name} ${riser5_chip_id} Power Offset Cal"
+    run_gain_calibration:
+      name: "Run ${unit_name} ${riser5_chip_id} Gain Cal"
+    clear_gain_calibration:
+      name: "Clear ${unit_name} ${riser5_chip_id} Gain Cal"
+
+# Phase Voltage and Current Reference Values
+number:
+  - platform: atm90e32
+    id: ${riser5_chip_id}
+    reference_voltage:
+      phase_a:
+        name: ${unit_name} ${riser5_chip_id} Phase A VRef
+        mode: box
+        unit_of_measurement: "V"
+      phase_b:
+        name: ${unit_name} ${riser5_chip_id} Phase B VRef
+        mode: box
+        unit_of_measurement: "V"
+      phase_c:
+        name: ${unit_name} ${riser5_chip_id} Phase C VRef
+        mode: box
+        unit_of_measurement: "V"
+    reference_current:
+      phase_a:
+        name: ${unit_name} ${riser5_chip_id} Phase A IRef
+        mode: box
+        unit_of_measurement: "A"
+      phase_b:
+        name: ${unit_name} ${riser5_chip_id} Phase B IRef
+        mode: box
+        unit_of_measurement: "A"
+      phase_c:
+        name: ${unit_name} ${riser5_chip_id} Phase C IRef
+        mode: box
+        unit_of_measurement: "A"

@@ -1,0 +1,890 @@
+esphome:
+  name: pm2v1
+  comment: "${device_type}: ${device_comment}"
+
+esp32:
+  board: esp32-c6-devkitc-1
+  flash_size: 4MB
+  variant: esp32c6
+  framework:
+    type: esp-idf
+    version: recommended
+    sdkconfig_options:
+      CONFIG_ESPTOOLPY_FLASHSIZE_4MB: y
+      CONFIG_BT_BLE_50_FEATURES_SUPPORTED: y
+      CONFIG_BT_BLE_42_FEATURES_SUPPORTED: y
+      CONFIG_OPENTHREAD_ENABLED: n
+      CONFIG_ENABLE_WIFI_STATION: y
+      CONFIG_USE_MINIMAL_MDNS: n
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "ptdJtILT54VHuCRwRhVhRj5XOyLFS3/dbmsKnC+6G74="
+
+ota:
+  - platform: esphome
+    password: ""
+  - platform: web_server
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "pm2v1"
+    password: ""
+    ap_timeout: 15s
+
+captive_portal:
+
+# Flash write sanity check, prevents premature failure
+preferences:
+  flash_write_interval: 600s
+
+web_server:
+  port: 80
+  version: 3
+
+spi:
+  clk_pin: 19
+  miso_pin: 22
+  mosi_pin: 20
+
+substitutions:
+  device_type: ESP32-C6-H4
+  device_comment: Power Meter
+  disp_name: PM2v1
+# Interval of how often the power is updated
+  update_time: 15s
+
+  phase_a_current_cal: '14200'
+  phase_b_current_cal: '14200'
+  phase_c_current_cal: '14200'
+  phase_a_voltage_cal: '4200'
+  phase_b_voltage_cal: '4200'
+  phase_c_voltage_cal: '4200'
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ESP IP Address
+
+sensor:
+  - platform: wifi_signal # Reports the WiFi signal strength/RSSI in dB
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: "diagnostic"
+  - platform: copy # Reports the WiFi signal strength in %
+    source_id: wifi_signal_db
+    name: "WiFi Signal Strength"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: "diagnostic"
+    device_class: ""
+
+  - platform: atm90e32
+    cs_pin: GPIO23
+    id: chip1
+    phase_a:
+      voltage:
+        name: ${disp_name} L1 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT1 Amps
+        id: "ct1Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT1 Watts
+        accuracy_decimals: 4
+        id: "ct1Watts"
+      peak_current:
+        name: ${disp_name} CT1 Peak Amps
+        accuracy_decimals: 4
+        id: "ct1PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT1 Phase Angle
+        id: "ct1PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT1 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct1HarmonPower"
+      gain_voltage: ${phase_a_voltage_cal}
+      gain_ct: ${phase_a_current_cal}
+    phase_b:
+      voltage:
+        name: ${disp_name} L2 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT2 Amps
+        id: "ct2Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT2 Watts
+        accuracy_decimals: 4
+        id: "ct2Watts"
+      peak_current:
+        name: ${disp_name} CT2 Peak Amps
+        accuracy_decimals: 4
+        id: "ct2PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT2 Phase Angle
+        id: "ct2PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT2 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct2HarmonPower"
+      gain_voltage: ${phase_b_voltage_cal}
+      gain_ct: ${phase_b_current_cal}
+    phase_c:
+      voltage:
+        name: ${disp_name} L3 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT3 Amps
+        id: "ct3Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT3 Watts
+        accuracy_decimals: 4
+        id: "ct3Watts"
+      peak_current:
+        name: ${disp_name} CT3 Peak Amps
+        accuracy_decimals: 4
+        id: "ct3PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT3 Phase Angle
+        id: "ct3PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT3 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct3HarmonPower"
+      gain_voltage: ${phase_c_voltage_cal}
+      gain_ct: ${phase_c_current_cal}
+    enable_gain_calibration: True
+    enable_offset_calibration: True
+    frequency:
+      name: ${disp_name} IC1 Freq
+    line_frequency: 60Hz
+    gain_pga: 2x
+    chip_temperature:
+      name: ${disp_name} IC1 Temperature
+    update_interval: ${update_time}
+
+  - platform: atm90e32
+    cs_pin: GPIO0
+    id: chip2
+    phase_a:
+      voltage:
+        name: ${disp_name} L4 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT4 Amps
+        id: "ct4Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT4 Watts
+        accuracy_decimals: 4
+        id: "ct4Watts"
+      peak_current:
+        name: ${disp_name} CT4 Peak Amps
+        accuracy_decimals: 4
+        id: "ct4PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT4 Phase Angle
+        id: "ct4PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT4 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct4HarmonPower"
+      gain_voltage: ${phase_a_voltage_cal}
+      gain_ct: ${phase_a_current_cal}
+    phase_b:
+      voltage:
+        name: ${disp_name} L5 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT5 Amps
+        id: "ct5Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT5 Watts
+        accuracy_decimals: 4
+        id: "ct5Watts"
+      peak_current:
+        name: ${disp_name} CT5 Peak Amps
+        accuracy_decimals: 4
+        id: "ct5PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT5 Phase Angle
+        id: "ct5PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT5 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct5HarmonPower"
+      gain_voltage: ${phase_b_voltage_cal}
+      gain_ct: ${phase_b_current_cal}
+    phase_c:
+      voltage:
+        name: ${disp_name} L6 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT6 Amps
+        id: "ct6Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT6 Watts
+        accuracy_decimals: 4
+        id: "ct6Watts"
+      peak_current:
+        name: ${disp_name} CT6 Peak Amps
+        accuracy_decimals: 4
+        id: "ct6PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT6 Phase Angle
+        id: "ct6PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT6 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct6HarmonPower"
+      gain_voltage: ${phase_c_voltage_cal}
+      gain_ct: ${phase_c_current_cal}
+    enable_gain_calibration: True
+    enable_offset_calibration: True
+
+    frequency:
+      name: ${disp_name} IC2 Freq
+    line_frequency: 60Hz
+    gain_pga: 2x
+    chip_temperature:
+      name: ${disp_name} IC2 Temperature
+    update_interval: ${update_time}
+
+  - platform: atm90e32
+    cs_pin: GPIO1
+    id: chip3
+    phase_a:
+      voltage:
+        name: ${disp_name} L7 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT7 Amps
+        id: "ct7Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT7 Watts
+        accuracy_decimals: 4
+        id: "ct7Watts"
+      peak_current:
+        name: ${disp_name} CT7 Peak Amps
+        accuracy_decimals: 4
+        id: "ct7PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT7 Phase Angle
+        id: "ct7PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT7 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct7HarmonPower"
+      gain_voltage: ${phase_a_voltage_cal}
+      gain_ct: ${phase_a_current_cal}
+    phase_b:
+      voltage:
+        name: ${disp_name} L8 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT8 Amps
+        id: "ct8Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT8 Watts
+        accuracy_decimals: 4
+        id: "ct8Watts"
+      peak_current:
+        name: ${disp_name} CT8 Peak Amps
+        accuracy_decimals: 4
+        id: "ct8PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT8 Phase Angle
+        id: "ct8PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT8 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct8HarmonPower"
+      gain_voltage: ${phase_b_voltage_cal}
+      gain_ct: ${phase_b_current_cal}
+    phase_c:
+      voltage:
+        name: ${disp_name} L9 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT9 Amps
+        id: "ct9Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT9 Watts
+        accuracy_decimals: 4
+        id: "ct9Watts"
+      peak_current:
+        name: ${disp_name} CT9 Peak Amps
+        accuracy_decimals: 4
+        id: "ct9PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT9 Phase Angle
+        id: "ct9PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT9 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct9HarmonPower"
+      gain_voltage: ${phase_c_voltage_cal}
+      gain_ct: ${phase_c_current_cal}
+    enable_gain_calibration: True
+    enable_offset_calibration: True
+    frequency:
+      name: ${disp_name} IC3 Freq
+    line_frequency: 60Hz
+    gain_pga: 2x
+    chip_temperature:
+      name: ${disp_name} IC3 Temperature
+    update_interval: ${update_time}
+
+  - platform: atm90e32
+    cs_pin: GPIO2
+    id: chip4
+    phase_a:
+      voltage:
+        name: ${disp_name} L10 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT10 Amps
+        id: "ct10Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT10 Watts
+        accuracy_decimals: 4
+        id: "ct10Watts"
+      peak_current:
+        name: ${disp_name} CT10 Peak Amps
+        accuracy_decimals: 4
+        id: "ct10PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT10 Phase Angle
+        id: "ct10PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT10 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct10HarmonPower"
+      gain_voltage: ${phase_a_voltage_cal}
+      gain_ct: ${phase_a_current_cal}
+    phase_b:
+      voltage:
+        name: ${disp_name} L11 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT11 Amps
+        id: "ct11Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT11 Watts
+        accuracy_decimals: 4
+        id: "ct11Watts"
+      peak_current:
+        name: ${disp_name} CT11 Peak Amps
+        accuracy_decimals: 4
+        id: "ct11PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT11 Phase Angle
+        id: "ct11PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT11 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct11HarmonPower"
+      gain_voltage: ${phase_b_voltage_cal}
+      gain_ct: ${phase_b_current_cal}
+    phase_c:
+      voltage:
+        name: ${disp_name} L12 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT12 Amps
+        id: "ct12Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT12 Watts
+        accuracy_decimals: 4
+        id: "ct12Watts"
+      peak_current:
+        name: ${disp_name} CT12 Peak Amps
+        accuracy_decimals: 4
+        id: "ct12PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT12 Phase Angle
+        id: "ct12PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT12 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct12HarmonPower"
+      gain_voltage: ${phase_c_voltage_cal}
+      gain_ct: ${phase_c_current_cal}
+    enable_gain_calibration: True
+    enable_offset_calibration: True
+    frequency:
+      name: ${disp_name} IC4 Freq
+    line_frequency: 60Hz
+    gain_pga: 2x
+    chip_temperature:
+      name: ${disp_name} IC4 Temperature
+    update_interval: ${update_time}
+
+  - platform: atm90e32
+    cs_pin: GPIO3
+    id: chip5
+    phase_a:
+      voltage:
+        name: ${disp_name} L13 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT13 Amps
+        id: "ct13Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT13 Watts
+        accuracy_decimals: 4
+        id: "ct13Watts"
+      peak_current:
+        name: ${disp_name} CT13 Peak Amps
+        accuracy_decimals: 4
+        id: "ct13PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT13 Phase Angle
+        id: "ct13PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT13 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct13HarmonPower"
+      gain_voltage: ${phase_a_voltage_cal}
+      gain_ct: ${phase_a_current_cal}
+    phase_b:
+      voltage:
+        name: ${disp_name} L14 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT14 Amps
+        id: "ct14Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT14 Watts
+        accuracy_decimals: 4
+        id: "ct14Watts"
+      peak_current:
+        name: ${disp_name} CT14 Peak Amps
+        accuracy_decimals: 4
+        id: "ct14PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT14 Phase Angle
+        id: "ct14PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT14 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct14HarmonPower"
+      gain_voltage: ${phase_b_voltage_cal}
+      gain_ct: ${phase_b_current_cal}
+    phase_c:
+      voltage:
+        name: ${disp_name} L15 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT15 Amps
+        id: "ct15Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT15 Watts
+        accuracy_decimals: 4
+        id: "ct15Watts"
+      peak_current:
+        name: ${disp_name} CT15 Peak Amps
+        accuracy_decimals: 4
+        id: "ct15PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT15 Phase Angle
+        id: "ct15PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT15 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct15HarmonPower"
+      gain_voltage: ${phase_c_voltage_cal}
+      gain_ct: ${phase_c_current_cal}
+    enable_gain_calibration: True
+    enable_offset_calibration: True
+    frequency:
+      name: ${disp_name} IC5 Freq
+    line_frequency: 60Hz
+    gain_pga: 2x
+    chip_temperature:
+      name: ${disp_name} IC5 Temperature
+    update_interval: ${update_time}
+  
+  - platform: atm90e32
+    cs_pin: GPIO10
+    id: chip6
+    phase_a:
+      voltage:
+        name: ${disp_name} L16 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT16 Amps
+        id: "ct16Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT16 Watts
+        accuracy_decimals: 4
+        id: "ct16Watts"
+      peak_current:
+        name: ${disp_name} CT16 Peak Amps
+        accuracy_decimals: 4
+        id: "ct16PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT16 Phase Angle
+        id: "ct16PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT16 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct16HarmonPower"
+      gain_voltage: ${phase_a_voltage_cal}
+      gain_ct: ${phase_a_current_cal}
+    phase_b:
+      voltage:
+        name: ${disp_name} L17 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT17 Amps
+        id: "ct17Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT17 Watts
+        accuracy_decimals: 4
+        id: "ct17Watts"
+      peak_current:
+        name: ${disp_name} CT17 Peak Amps
+        accuracy_decimals: 4
+        id: "ct17PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT17 Phase Angle
+        id: "ct17PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT17 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct17HarmonPower"
+      gain_voltage: ${phase_b_voltage_cal}
+      gain_ct: ${phase_b_current_cal}
+    phase_c:
+      voltage:
+        name: ${disp_name} L18 Volts
+        accuracy_decimals: 4
+      current:
+        name: ${disp_name} CT18 Amps
+        id: "ct18Amps"
+        accuracy_decimals: 4
+      power:
+        name: ${disp_name} CT18 Watts
+        accuracy_decimals: 4
+        id: "ct18Watts"
+      peak_current:
+        name: ${disp_name} CT18 Peak Amps
+        accuracy_decimals: 4
+        id: "ct18PeakAmps"
+      phase_angle:
+        name: ${disp_name} CT18 Phase Angle
+        id: "ct18PhaseAngle"
+        accuracy_decimals: 0
+      harmonic_power:
+        name: ${disp_name} CT18 Harmonic Power
+        accuracy_decimals: 4
+        id: "ct18HarmonPower"
+      gain_voltage: ${phase_c_voltage_cal}
+      gain_ct: ${phase_c_current_cal}
+    enable_gain_calibration: True
+    enable_offset_calibration: True
+    frequency:
+      name: ${disp_name} IC6 Freq
+    line_frequency: 60Hz
+    gain_pga: 2x
+    chip_temperature:
+      name: ${disp_name} IC6 Temperature
+    update_interval: ${update_time}
+
+  - platform: template
+    name: ${disp_name} Total Amps
+    id: "totalAmps"
+    lambda: return id(ct1Amps).state+id(ct2Amps).state+id(ct3Amps).state+id(ct4Amps).state+id(ct5Amps).state+id(ct6Amps).state+id(ct7Amps).state+id(ct8Amps).state+id(ct9Amps).state+id(ct10Amps).state+id(ct11Amps).state+id(ct12Amps).state+id(ct13Amps).state+id(ct14Amps).state+id(ct15Amps).state+id(ct16Amps).state+id(ct17Amps).state+id(ct18Amps).state;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    update_interval: ${update_time}
+    device_class: current
+  - platform: template
+    name: ${disp_name} Total Watts
+    id: "totalWatts"
+    lambda: return id(ct1Watts).state+id(ct2Watts).state+id(ct3Watts).state+id(ct4Watts).state+id(ct5Watts).state+id(ct6Watts).state+id(ct7Watts).state+id(ct8Watts).state+id(ct9Watts).state+id(ct10Watts).state+id(ct11Watts).state+id(ct12Watts).state+id(ct13Watts).state+id(ct14Watts).state+id(ct15Watts).state+id(ct16Watts).state+id(ct17Watts).state+id(ct18Watts).state;
+    accuracy_decimals: 0
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+
+  - platform: total_daily_energy
+    name: ${disp_name} Total kWh
+    power_id: totalWatts
+    filters:
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total_increasing
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+
+
+switch:
+  - platform: restart
+    name: ${disp_name} Restart
+
+button:
+  - platform: atm90e32
+    id: chip1
+    run_gain_calibration:
+      name: "Run IC1 Gain Calibration"
+#    clear_gain_calibration:
+#      name: "Clear Gain Calibration"
+#    run_offset_calibration:
+#      name: "Run Offset Calibration"
+    clear_offset_calibration:
+      name: "Clear IC1 Offset Calibration"
+#    run_power_offset_calibration:
+#      name: "Run Power Offset Calibration"
+#    clear_power_offset_calibration:
+#      name: "Clear Power Offset Calibration"
+  - platform: atm90e32
+    id: chip2
+    run_gain_calibration:
+      name: "Run IC2 Gain Calibration"
+#    clear_gain_calibration:
+#      name: "Clear Gain Calibration"
+#    run_offset_calibration:
+#      name: "Run Offset Calibration"
+    clear_offset_calibration:
+      name: "Clear IC2 Offset Calibration"
+#    run_power_offset_calibration:
+#      name: "Run Power Offset Calibration"
+#    clear_power_offset_calibration:
+#      name: "Clear Power Offset Calibration"
+  - platform: atm90e32
+    id: chip3
+    run_gain_calibration:
+      name: "Run IC3 Gain Calibration"
+#    clear_gain_calibration:
+#      name: "Clear Gain Calibration"
+#    run_offset_calibration:
+#      name: "Run Offset Calibration"
+    clear_offset_calibration:
+      name: "Clear IC3 Offset Calibration"
+#    run_power_offset_calibration:
+#      name: "Run Power Offset Calibration"
+#    clear_power_offset_calibration:
+#      name: "Clear Power Offset Calibration"
+  - platform: atm90e32
+    id: chip4
+    run_gain_calibration:
+      name: "Run IC4 Gain Calibration"
+#    clear_gain_calibration:
+#      name: "Clear Gain Calibration"
+#    run_offset_calibration:
+#      name: "Run Offset Calibration"
+    clear_offset_calibration:
+      name: "Clear IC4 Offset Calibration"
+#    run_power_offset_calibration:
+#      name: "Run Power Offset Calibration"
+#    clear_power_offset_calibration:
+#      name: "Clear Power Offset Calibration"
+  - platform: atm90e32
+    id: chip5
+    run_gain_calibration:
+      name: "Run IC5 Gain Calibration"
+#    clear_gain_calibration:
+#      name: "Clear Gain Calibration"
+#    run_offset_calibration:
+#      name: "Run Offset Calibration"
+    clear_offset_calibration:
+      name: "Clear IC5 Offset Calibration"
+#    run_power_offset_calibration:
+#      name: "Run Power Offset Calibration"
+#    clear_power_offset_calibration:
+#      name: "Clear Power Offset Calibration"
+  - platform: atm90e32
+    id: chip6
+    run_gain_calibration:
+      name: "Run IC6 Gain Calibration"
+#    clear_gain_calibration:
+#      name: "Clear Gain Calibration"
+#    run_offset_calibration:
+#      name: "Run Offset Calibration"
+    clear_offset_calibration:
+      name: "Clear IC6 Offset Calibration"
+#    run_power_offset_calibration:
+#      name: "Run Power Offset Calibration"
+#    clear_power_offset_calibration:
+#      name: "Clear Power Offset Calibration"
+number:
+  - platform: atm90e32
+    id: chip1
+    reference_voltage:
+      phase_a:
+        name: "IC1 Phase A Ref Voltage"
+        mode: box
+      phase_b:
+        name: "IC1 Phase B Ref Voltage"
+        mode: box
+      phase_c:
+        name: "IC1 Phase C Ref Voltage"
+        mode: box
+    reference_current:
+      phase_a:
+        name: "IC1 Phase A Ref Current"
+        mode: box
+      phase_b:
+        name: "IC1 Phase B Ref Current"
+        mode: box
+      phase_c:
+        name: "IC1 Phase C Ref Current"
+        mode: box
+  - platform: atm90e32
+    id: chip2
+    reference_voltage:
+      phase_a:
+        name: "IC2 Phase A Ref Voltage"
+        mode: box
+      phase_b:
+        name: "IC2 Phase B Ref Voltage"
+        mode: box
+      phase_c:
+        name: "IC2 Phase C Ref Voltage"
+        mode: box
+    reference_current:
+      phase_a:
+        name: "IC2 Phase A Ref Current"
+        mode: box
+      phase_b:
+        name: "IC2 Phase B Ref Current"
+        mode: box
+      phase_c:
+        name: "IC2 Phase C Ref Current"
+        mode: box
+  - platform: atm90e32
+    id: chip3
+    reference_voltage:
+      phase_a:
+        name: "IC3 Phase A Ref Voltage"
+        mode: box
+      phase_b:
+        name: "IC3 Phase B Ref Voltage"
+        mode: box
+      phase_c:
+        name: "IC3 Phase C Ref Voltage"
+        mode: box
+    reference_current:
+      phase_a:
+        name: "IC3 Phase A Ref Current"
+        mode: box
+      phase_b:
+        name: "IC3 Phase B Ref Current"
+        mode: box
+      phase_c:
+        name: "IC3 Phase C Ref Current"
+        mode: box
+  - platform: atm90e32
+    id: chip4
+    reference_voltage:
+      phase_a:
+        name: "IC4 Phase A Ref Voltage"
+        mode: box
+      phase_b:
+        name: "IC4 Phase B Ref Voltage"
+        mode: box
+      phase_c:
+        name: "IC4 Phase C Ref Voltage"
+        mode: box
+    reference_current:
+      phase_a:
+        name: "IC4 Phase A Ref Current"
+        mode: box
+      phase_b:
+        name: "IC4 Phase B Ref Current"
+        mode: box
+      phase_c:
+        name: "IC4 Phase C Ref Current"
+        mode: box
+  - platform: atm90e32
+    id: chip5
+    reference_voltage:
+      phase_a:
+        name: "IC5 Phase A Ref Voltage"
+        mode: box
+      phase_b:
+        name: "IC5 Phase B Ref Voltage"
+        mode: box
+      phase_c:
+        name: "IC5 Phase C Ref Voltage"
+        mode: box
+    reference_current:
+      phase_a:
+        name: "IC5 Phase A Ref Current"
+        mode: box
+      phase_b:
+        name: "IC5 Phase B Ref Current"
+        mode: box
+      phase_c:
+        name: "IC5 Phase C Ref Current"
+        mode: box
+  - platform: atm90e32
+    id: chip6
+    reference_voltage:
+      phase_a:
+        name: "IC6 Phase A Ref Voltage"
+        mode: box
+      phase_b:
+        name: "IC6 Phase B Ref Voltage"
+        mode: box
+      phase_c:
+        name: "IC6 Phase C Ref Voltage"
+        mode: box
+    reference_current:
+      phase_a:
+        name: "IC6 Phase A Ref Current"
+        mode: box
+      phase_b:
+        name: "IC6 Phase B Ref Current"
+        mode: box
+      phase_c:
+        name: "IC6 Phase C Ref Current"
+        mode: box

@@ -1,0 +1,251 @@
+substitutions:
+  device_name: grpm2
+  device_type: ESP32-C6-H4
+  device_comment: Power Meter
+  disp_name: GRPM2
+  update_time: 15s
+  line_frequency: 60Hz # Default
+  gain_pga: 1X # Defualt
+
+  # SPI CS Pins
+  main_spi_cs_pin: GPIO23
+  riser1_spi_cs_pin: GPIO0
+  riser2_spi_cs_pin: GPIO1
+  riser3_spi_cs_pin: GPIO2
+  riser4_spi_cs_pin: GPIO3
+  riser5_spi_cs_pin: GPIO10
+
+  main_chip_id: IC1
+  riser1_chip_id: IC2
+  riser2_chip_id: IC3
+  riser3_chip_id: IC4
+  riser4_chip_id: IC5
+  riser5_chip_id: IC6
+
+#********************************************************
+# Default MainBord is always present.
+
+  phase_a_ct_name: CT1
+  phase_b_ct_name: CT2
+  phase_c_ct_name: CT3
+  phase_a_line_name: L1
+  phase_b_line_name: L2
+  phase_c_line_name: L3
+  phase_a_voltage_cal: 4200
+  phase_b_voltage_cal: 4200
+  phase_c_voltage_cal: 4200
+  phase_a_current_cal: 14200
+  phase_b_current_cal: 14200
+  phase_c_current_cal: 14200
+  enable_gain_calibration: true
+  enable_offset_calibration: true
+
+packages:
+  remote_package_files:
+    url: https://github.com/gelidusresearch/grpm2
+    files:
+      - path: packages/grpm2.atm90e32.yaml
+        vars:
+          chip_id: ${main_chip_id}
+          spi_cs_pin: ${main_spi_cs_pin}
+          unit_name: MainBoard
+      - path: packages/grpm2.atm90e32.yaml
+        vars:
+          chip_id: ${riser1_chip_id}
+          spi_cs_pin: ${riser1_spi_cs_pin}
+          unit_name: Riser1
+          phase_a_ct_name: CT4
+          phase_b_ct_name: CT5
+          phase_c_ct_name: CT6
+          phase_a_line_name: L4
+          phase_b_line_name: L5
+          phase_c_line_name: L6
+          phase_a_voltage_cal: 4200
+          phase_b_voltage_cal: 4200
+          phase_c_voltage_cal: 4200
+          phase_a_current_cal: 14200
+          phase_b_current_cal: 14200
+          phase_c_current_cal: 14200
+      - path: packages/grpm2.atm90e32.yaml
+        vars:
+          chip_id: ${riser2_chip_id}
+          spi_cs_pin: ${riser2_spi_cs_pin}
+          unit_name: Riser2
+          phase_a_ct_name: CT7
+          phase_b_ct_name: CT8
+          phase_c_ct_name: CT9
+          phase_a_line_name: L7
+          phase_b_line_name: L8
+          phase_c_line_name: L9
+          phase_a_voltage_cal: 4200
+          phase_b_voltage_cal: 4200
+          phase_c_voltage_cal: 4200
+          phase_a_current_cal: 14200
+          phase_b_current_cal: 14200
+          phase_c_current_cal: 14200
+      - path: packages/grpm2.atm90e32.yaml
+        vars:
+          chip_id: ${riser3_chip_id}
+          spi_cs_pin: ${riser3_spi_cs_pin}
+          unit_name: Riser3
+          phase_a_ct_name: CT10
+          phase_b_ct_name: CT11
+          phase_c_ct_name: CT12
+          phase_a_line_name: L10
+          phase_b_line_name: L11
+          phase_c_line_name: L12
+          phase_a_voltage_cal: 4200
+          phase_b_voltage_cal: 4200
+          phase_c_voltage_cal: 4200
+          phase_a_current_cal: 14200
+          phase_b_current_cal: 14200
+          phase_c_current_cal: 14200
+      - path: packages/grpm2.atm90e32.yaml
+        vars:
+          chip_id: ${riser4_chip_id}
+          spi_cs_pin: ${riser4_spi_cs_pin}
+          unit_name: Riser4
+          phase_a_ct_name: CT13
+          phase_b_ct_name: CT14
+          phase_c_ct_name: CT15
+          phase_a_line_name: L13
+          phase_b_line_name: L14
+          phase_c_line_name: L15
+          phase_a_voltage_cal: 4200
+          phase_b_voltage_cal: 4200
+          phase_c_voltage_cal: 4200
+          phase_a_current_cal: 14200
+          phase_b_current_cal: 14200
+          phase_c_current_cal: 14200
+      - path: packages/grpm2.atm90e32.yaml
+        vars:
+          chip_id: ${riser5_chip_id}
+          spi_cs_pin: ${riser5_spi_cs_pin}
+          unit_name: Riser5
+          phase_a_ct_name: CT16
+          phase_b_ct_name: CT17
+          phase_c_ct_name: CT18
+          phase_a_line_name: L16
+          phase_b_line_name: L17
+          phase_c_line_name: L18
+          phase_a_voltage_cal: 4200
+          phase_b_voltage_cal: 4200
+          phase_c_voltage_cal: 4200
+          phase_a_current_cal: 14200
+          phase_b_current_cal: 14200
+          phase_c_current_cal: 14200
+#********************************************************
+# Enable calibration features for a board(s)
+
+      - path: packages/grpm2.atm90e32.cal.yaml
+        vars:
+          chip_id: ${main_chip_id}
+          unit_name: MainBoard
+      - path: packages/grpm2.atm90e32.cal.yaml
+        vars:
+          chip_id: ${riser1_chip_id}
+          unit_name: Riser1
+      - path: packages/grpm2.atm90e32.cal.yaml
+        vars:
+          chip_id: ${riser2_chip_id}
+          unit_name: Riser2
+      - path: packages/grpm2.atm90e32.cal.yaml
+        vars:
+          chip_id: ${riser3_chip_id}
+          unit_name: Riser3
+    ref: main
+    refresh: 1d
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${disp_name}
+  name_add_mac_suffix: false
+  min_version: '2025.9.0'
+  project:
+    name: "Gelidus Research.3 Phase Expandable Power Meter"
+    version: 1.0.0
+
+dashboard_import:
+  package_import_url: github://gelidusresearch/grpm2/grpm2.12c.yaml@main
+  import_full_config: true
+
+esp32:
+  board: esp32-c6-devkitc-1
+  flash_size: 4MB
+  variant: esp32c6
+  framework:
+    type: esp-idf
+    version: recommended
+    sdkconfig_options:
+      CONFIG_ESPTOOLPY_FLASHSIZE_4MB: y
+      CONFIG_BT_BLE_50_FEATURES_SUPPORTED: y
+      CONFIG_BT_BLE_42_FEATURES_SUPPORTED: y
+      CONFIG_OPENTHREAD_ENABLED: n
+      CONFIG_ENABLE_WIFI_STATION: y
+      CONFIG_USE_MINIMAL_MDNS: n
+
+logger:
+
+api:
+
+ota:
+- platform: esphome
+
+wifi:
+  ap:
+    password: ''
+    ap_timeout: 15s
+
+captive_portal:
+
+improv_serial:
+
+preferences:
+  flash_write_interval: 300s
+
+web_server:
+  port: 80
+  version: 3
+
+spi:
+  clk_pin: 19
+  miso_pin: 22
+  mosi_pin: 20
+
+time:
+- platform: homeassistant
+  id: homeassistant_time
+
+sensor:
+- platform: template
+  name: ${disp_name} Total Amps
+  id: totalAmps                   # 3 Phase System Total Current using main board Phase A, B, C - Split Phase uses Phase A and B only
+  lambda: |-
+      return id(${phase_a_ct_name}Amps).state +
+             id(${phase_b_ct_name}Amps).state +
+             id(${phase_c_ct_name}Amps).state;
+  accuracy_decimals: 2
+  unit_of_measurement: A
+  device_class: current
+  update_interval: ${update_time}
+
+- platform: template
+  name: ${disp_name} Total Watts
+  id: totalWatts                  # 3 Phase System Total Power using main board Phase A, B, C - Split Phase uses Phase A and B only
+  lambda: |-
+      return id(${phase_a_ct_name}Watts).state +
+             id(${phase_b_ct_name}Watts).state +
+             id(${phase_c_ct_name}Watts).state;
+  accuracy_decimals: 0
+  unit_of_measurement: W
+  device_class: power
+  update_interval: ${update_time}
+
+- platform: total_daily_energy
+  name: ${disp_name} Total kWh
+  power_id: totalWatts
+  filters:
+  - multiply: 0.001
+  unit_of_measurement: kWh
+  device_class: energy
+  state_class: total_increasing

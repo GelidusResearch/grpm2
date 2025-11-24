@@ -1,0 +1,17 @@
+sensor:
+  - platform: template
+    name: ${disp_name} ${unit_name} ${chip_id} Total Amps
+    id: totalAmps${chip_id}
+    lambda: return id(${phase_a_ct_name}Amps).state+id(${phase_b_ct_name}Amps).state+id(${phase_c_ct_name}Amps).state;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}
+  - platform: template
+    name: ${disp_name} ${unit_name} ${chip_id} Total Watts
+    id: totalWatts${chip_id}
+    lambda: return id(${phase_a_ct_name}Watts).state+id(${phase_b_ct_name}Watts).state+id(${phase_c_ct_name}Watts).state;
+    accuracy_decimals: 2
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}

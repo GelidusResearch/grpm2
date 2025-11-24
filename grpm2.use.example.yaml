@@ -1,0 +1,402 @@
+substitutions:
+  device_name: grpm2-myhouse
+  device_type: ESP32-C6-H4
+  device_comment: Power Meter
+  disp_name: GRPM2
+  update_time: 15s
+  line_frequency: 60Hz
+  gain_pga: 1X
+
+  # SPI CS Pins
+  main_spi_cs_pin: GPIO23
+  riser1_spi_cs_pin: GPIO0
+  riser2_spi_cs_pin: GPIO1
+  riser3_spi_cs_pin: GPIO2
+  riser4_spi_cs_pin: GPIO3
+  riser5_spi_cs_pin: GPIO10
+
+  # Chip IDs
+  main_chip_id: IC1
+  riser1_chip_id: IC2
+  riser2_chip_id: IC3
+  riser3_chip_id: IC4
+  riser4_chip_id: IC5
+  riser5_chip_id: IC6
+
+  # MainBoard CT and Line Names
+  phase_a_ct_name: CT1
+  phase_b_ct_name: CT2
+  phase_c_ct_name: CT3
+  phase_a_line_name: L1
+  phase_b_line_name: L2
+  phase_c_line_name: L3
+
+  # MainBoard Calibration Values (adjust these for your installation)
+  phase_a_voltage_cal: 4200
+  phase_b_voltage_cal: 4200
+  phase_c_voltage_cal: 4200
+  phase_a_current_cal: 14200
+  phase_b_current_cal: 14200
+  phase_c_current_cal: 14200
+  enable_gain_calibration: true
+  enable_offset_calibration: true
+
+  # Riser1 CT Names and Calibration
+  riser1_phase_a_ct_name: CT4
+  riser1_phase_b_ct_name: CT5
+  riser1_phase_c_ct_name: CT6
+  riser1_phase_a_line_name: L4
+  riser1_phase_b_line_name: L5
+  riser1_phase_c_line_name: L6
+  riser1_phase_a_voltage_cal: 4200
+  riser1_phase_b_voltage_cal: 4200
+  riser1_phase_c_voltage_cal: 4200
+  riser1_phase_a_current_cal: 14200
+  riser1_phase_b_current_cal: 14200
+  riser1_phase_c_current_cal: 14200
+
+  # Riser2 CT Names and Calibration
+  riser2_phase_a_ct_name: CT7
+  riser2_phase_b_ct_name: CT8
+  riser2_phase_c_ct_name: CT9
+  riser2_phase_a_line_name: L7
+  riser2_phase_b_line_name: L8
+  riser2_phase_c_line_name: L9
+  riser2_phase_a_voltage_cal: 4200
+  riser2_phase_b_voltage_cal: 4200
+  riser2_phase_c_voltage_cal: 4200
+  riser2_phase_a_current_cal: 14200
+  riser2_phase_b_current_cal: 14200
+  riser2_phase_c_current_cal: 14200
+
+  # Riser3 CT Names and Calibration
+  riser3_phase_a_ct_name: CT10
+  riser3_phase_b_ct_name: CT11
+  riser3_phase_c_ct_name: CT12
+  riser3_phase_a_line_name: L10
+  riser3_phase_b_line_name: L11
+  riser3_phase_c_line_name: L12
+  riser3_phase_a_voltage_cal: 4200
+  riser3_phase_b_voltage_cal: 4200
+  riser3_phase_c_voltage_cal: 4200
+  riser3_phase_a_current_cal: 14200
+  riser3_phase_b_current_cal: 14200
+  riser3_phase_c_current_cal: 14200
+
+  # Riser4 CT Names and Calibration
+  riser4_phase_a_ct_name: CT13
+  riser4_phase_b_ct_name: CT14
+  riser4_phase_c_ct_name: CT15
+  riser4_phase_a_line_name: L13
+  riser4_phase_b_line_name: L14
+  riser4_phase_c_line_name: L15
+  riser4_phase_a_voltage_cal: 4200
+  riser4_phase_b_voltage_cal: 4200
+  riser4_phase_c_voltage_cal: 4200
+  riser4_phase_a_current_cal: 14200
+  riser4_phase_b_current_cal: 14200
+  riser4_phase_c_current_cal: 14200
+
+  # Riser5 CT Names and Calibration
+  riser5_phase_a_ct_name: CT16
+  riser5_phase_b_ct_name: CT17
+  riser5_phase_c_ct_name: CT18
+  riser5_phase_a_line_name: L16
+  riser5_phase_b_line_name: L17
+  riser5_phase_c_line_name: L18
+  riser5_phase_a_voltage_cal: 4200
+  riser5_phase_b_voltage_cal: 4200
+  riser5_phase_c_voltage_cal: 4200
+  riser5_phase_a_current_cal: 14200
+  riser5_phase_b_current_cal: 14200
+  riser5_phase_c_current_cal: 14200
+
+packages:
+  remote_package_files:
+    url: https://github.com/gelidusresearch/grpm2
+    files:
+#********************************************************
+# STEP 1: Choose your base configuration
+# Uncomment ONE of the following options based on your hardware:
+
+      # Option 1: 3-Circuit (MainBoard only - CT1, CT2, CT3)
+      # - path: grpm2.3c.yaml
+
+      # Option 2: 6-Circuit (MainBoard + 1 Riser - CT1-CT6)
+      # - path: grpm2.6c.yaml
+
+      # Option 3: 9-Circuit (MainBoard + 2 Risers - CT1-CT9)
+      # - path: grpm2.9c.yaml
+
+      # Option 4: 12-Circuit (MainBoard + 3 Risers - CT1-CT12)
+      # - path: grpm2.12c.yaml
+
+      # Option 5: 15-Circuit (MainBoard + 4 Risers - CT1-CT15)
+      # - path: grpm2.15c.yaml
+
+      # Option 6: 18-Circuit (MainBoard + 5 Risers - CT1-CT18)
+      - path: grpm2.18c.yaml
+    ref: main
+    refresh: 1d
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${disp_name}
+  name_add_mac_suffix: true
+  project:
+    name: "Gelidus Research.3 Phase Expandable Power Meter"
+    version: 1.0.0
+
+esp32:
+  board: esp32-c6-devkitc-1
+  flash_size: 4MB
+  variant: esp32c6
+  framework:
+    type: esp-idf
+    version: recommended
+    sdkconfig_options:
+      CONFIG_ESPTOOLPY_FLASHSIZE_4MB: y
+      CONFIG_BT_BLE_50_FEATURES_SUPPORTED: y
+      CONFIG_BT_BLE_42_FEATURES_SUPPORTED: y
+      CONFIG_OPENTHREAD_ENABLED: n
+      CONFIG_ENABLE_WIFI_STATION: y
+      CONFIG_USE_MINIMAL_MDNS: n
+
+logger:
+
+api:
+
+ota:
+- platform: esphome
+
+wifi:
+  ap:
+    password: ''
+    ap_timeout: 15s
+
+captive_portal:
+
+improv_serial:
+
+preferences:
+  flash_write_interval: 300s
+
+web_server:
+  port: 80
+  version: 3
+
+spi:
+  clk_pin: 19
+  miso_pin: 22
+  mosi_pin: 20
+
+time:
+- platform: homeassistant
+  id: homeassistant_time
+
+sensor:
+  # System Total Sensors - Sums all main line CTs
+  - platform: template
+    name: ${disp_name} Total Amps
+    id: totalAmps
+    lambda: |-
+      return id(${phase_a_ct_name}Amps).state +
+             id(${phase_b_ct_name}Amps).state +
+             id(${phase_c_ct_name}Amps).state;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}
+
+  - platform: template
+    name: ${disp_name} Total Watts
+    id: totalWatts
+    lambda: |-
+      return id(${phase_a_ct_name}Watts).state +
+             id(${phase_b_ct_name}Watts).state +
+             id(${phase_c_ct_name}Watts).state;
+    accuracy_decimals: 0
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+
+  - platform: total_daily_energy
+    name: ${disp_name} Total kWh
+    power_id: totalWatts
+    filters:
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total_increasing
+
+#********************************************************
+# STEP 2: Define your custom CT groups (optional)
+# Copy and modify the examples below to group CTs by room/function
+# Each group creates three sensors:
+#   - Watts (real-time power)
+#   - Amps (total current)
+#   - kWh (daily energy consumption)
+#
+# NOTE: CT1, CT2, CT3 are the main line CTs (L1, L2, L3)
+#       For split phase: CT1=L1, CT2=L2
+#       Start your circuit groups with CT4 and higher
+
+sensor:
+  # Mains Group - 3-Phase Total (CT1 + CT2 + CT3)
+  - platform: template
+    name: ${disp_name} Mains Watts
+    id: mains_watts
+    lambda: |-
+      return id(CT1Watts).state + id(CT2Watts).state + id(CT3Watts).state;
+    accuracy_decimals: 0
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+
+  - platform: template
+    name: ${disp_name} Mains Amps
+    id: mains_amps
+    lambda: |-
+      return id(CT1Amps).state + id(CT2Amps).state + id(CT3Amps).state;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}
+
+  - platform: total_daily_energy
+    name: ${disp_name} Mains kWh
+    power_id: mains_watts
+    filters:
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total_increasing
+
+  # Split Phase Mains Group - For split phase systems (CT1 + CT2 only)
+  # Uncomment this group and comment out the 3-Phase group above if using split phase
+  #
+  # - platform: template
+  #   name: ${disp_name} Mains Watts
+  #   id: mains_watts
+  #   lambda: |-
+  #     return id(CT1Watts).state + id(CT2Watts).state;
+  #   accuracy_decimals: 0
+  #   unit_of_measurement: W
+  #   device_class: power
+  #   update_interval: ${update_time}
+  #
+  # - platform: template
+  #   name: ${disp_name} Mains Amps
+  #   id: mains_amps
+  #   lambda: |-
+  #     return id(CT1Amps).state + id(CT2Amps).state;
+  #   accuracy_decimals: 2
+  #   unit_of_measurement: A
+  #   device_class: current
+  #   update_interval: ${update_time}
+  #
+  # - platform: total_daily_energy
+  #   name: ${disp_name} Mains kWh
+  #   power_id: mains_watts
+  #   filters:
+  #     - multiply: 0.001
+  #   unit_of_measurement: kWh
+  #   device_class: energy
+  #   state_class: total_increasing
+
+  # Kitchen Group - Example grouping multiple CTs
+  - platform: template
+    name: ${disp_name} Kitchen Watts
+    id: kitchen_watts
+    lambda: |-
+      return id(CT4Watts).state + id(CT7Watts).state + id(CT10Watts).state;
+    accuracy_decimals: 0
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+
+  - platform: template
+    name: ${disp_name} Kitchen Amps
+    id: kitchen_amps
+    lambda: |-
+      return id(CT4Amps).state + id(CT7Amps).state + id(CT10Amps).state;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}
+
+  - platform: total_daily_energy
+    name: ${disp_name} Kitchen kWh
+    power_id: kitchen_watts
+    filters:
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total_increasing
+
+  # HVAC Group - Example with two CTs
+  - platform: template
+    name: ${disp_name} HVAC Watts
+    id: hvac_watts
+    lambda: |-
+      return id(CT5Watts).state + id(CT8Watts).state;
+    accuracy_decimals: 0
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+
+  - platform: template
+    name: ${disp_name} HVAC Amps
+    id: hvac_amps
+    lambda: |-
+      return id(CT5Amps).state + id(CT8Amps).state;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}
+
+  - platform: total_daily_energy
+    name: ${disp_name} HVAC kWh
+    power_id: hvac_watts
+    filters:
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total_increasing
+
+#********************************************************
+# Add more groups as needed. Copy the pattern above and change:
+#   - Group name (Kitchen, Bedrooms, Garage, etc.)
+#   - CT IDs in the lambda expressions
+#   - sensor id (must be unique, use lowercase with underscores)
+#
+# Example single CT group:
+#
+#  - platform: template
+#    name: ${disp_name} Garage Watts
+#    id: garage_watts
+#    lambda: |-
+#      return id(CT18Watts).state;
+#    accuracy_decimals: 0
+#    unit_of_measurement: W
+#    device_class: power
+#    update_interval: ${update_time}
+#
+#  - platform: template
+#    name: ${disp_name} Garage Amps
+#    id: garage_amps
+#    lambda: |-
+#      return id(CT18Amps).state;
+#    accuracy_decimals: 2
+#    unit_of_measurement: A
+#    device_class: current
+#    update_interval: ${update_time}
+#
+#  - platform: total_daily_energy
+#    name: ${disp_name} Garage kWh
+#    power_id: garage_watts
+#    filters:
+#      - multiply: 0.001
+#    unit_of_measurement: kWh
+#    device_class: energy
+#    state_class: total_increasing

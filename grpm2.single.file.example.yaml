@@ -1,5 +1,5 @@
 esphome:
-  name: pm2v1
+  name: grpm2
   comment: "${device_type}: ${device_comment}"
 
 esp32:
@@ -36,7 +36,7 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "pm2v1"
+    ssid: "grpm2"
     password: ""
     ap_timeout: 15s
 
@@ -58,7 +58,7 @@ spi:
 substitutions:
   device_type: ESP32-C6-H4
   device_comment: Power Meter
-  disp_name: PM2v1
+  disp_name: grpm2
 # Interval of how often the power is updated
   update_time: 15s
 
@@ -543,7 +543,7 @@ sensor:
     chip_temperature:
       name: ${disp_name} IC5 Temperature
     update_interval: ${update_time}
-  
+
   - platform: atm90e32
     cs_pin: GPIO10
     id: chip6

@@ -105,7 +105,7 @@ packages:
 esphome:
   name: ${device_name}
   friendly_name: ${disp_name}
-  name_add_mac_suffix: true
+  name_add_mac_suffix: false
   project:
     name: "Gelidus Research.3 Phase Expandable Power Meter"
     version: "1.0"
@@ -138,10 +138,10 @@ api:
 
 ota:
 - platform: esphome
+- platform: web_server
 
 wifi:
   ap:
-    password: ''
     ap_timeout: 15s
 
 captive_portal:

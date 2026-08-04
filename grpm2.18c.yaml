@@ -208,10 +208,10 @@ api:
 
 ota:
 - platform: esphome
+- platform: web_server
 
 wifi:
   ap:
-    password: ''
     ap_timeout: 15s
 
 captive_portal:

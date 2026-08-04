@@ -5,7 +5,7 @@ substitutions:
   disp_name: GRPM2
   update_time: 15s
   line_frequency: 60Hz
-  gain_pga: 2X
+  gain_pga: 1X
 
   # SPI CS Pins
   main_spi_cs_pin: GPIO23
@@ -41,18 +41,6 @@ substitutions:
   enable_gain_calibration: true
   enable_offset_calibration: true
 
-esphome:
-  name: ${device_name}
-  friendly_name: ${disp_name}
-  name_add_mac_suffix: false
-  project:
-    name: "Gelidus Research.3 Phase Expandable Power Meter"
-    version: "1.0"
-
-dashboard_import:
-  package_import_url: github://gelidusresearch/grpm2/grpm2.3c.split.yaml@main
-  import_full_config: true
-
 packages:
   remote_package_files:
     url: https://github.com/gelidusresearch/grpm2
@@ -61,9 +49,6 @@ packages:
 #********************************************************
 # For advanced configuration options and custom CT grouping examples,
 # see: https://github.com/gelidusresearch/grpm2/blob/main/grpm2.use.example.yaml
-
-#********************************************************
-# Configure basic voltage, current and power outputs for board(s)
 
       - path: packages/grpm2.atm90e32.yaml
         vars:
@@ -87,6 +72,24 @@ packages:
           phase_a_current_cal: 14200
           phase_b_current_cal: 14200
           phase_c_current_cal: 14200
+      - path: packages/grpm2.atm90e32.yaml
+        vars:
+          chip_id: ${riser2_chip_id}
+          spi_cs_pin: ${riser2_spi_cs_pin}
+          unit_name: Riser2
+          phase_a_ct_name: CT7
+          phase_b_ct_name: CT8
+          phase_c_ct_name: CT9
+          phase_a_line_name: L7
+          phase_b_line_name: L8
+          phase_c_line_name: L9
+          phase_a_voltage_cal: 4200
+          phase_b_voltage_cal: 4200
+          phase_c_voltage_cal: 4200
+          phase_a_current_cal: 14200
+          phase_b_current_cal: 14200
+          phase_c_current_cal: 14200
+
 
 #********************************************************
 # Enable advanced power quality features for board(s)
@@ -102,9 +105,16 @@ packages:
           phase_a_ct_name: CT4
           phase_b_ct_name: CT5
           phase_c_ct_name: CT6
+      - path: packages/grpm2.atm90e32.pq.yaml
+        vars:
+          chip_id: ${riser2_chip_id}
+          unit_name: Riser2
+          phase_a_ct_name: CT7
+          phase_b_ct_name: CT8
+          phase_c_ct_name: CT9
 
 #********************************************************
-# Enable calibration features for board(s)
+# Enable calibration features for a board(s)
 
       - path: packages/grpm2.atm90e32.cal.yaml
         vars:
@@ -113,10 +123,25 @@ packages:
       - path: packages/grpm2.atm90e32.cal.yaml
         vars:
           chip_id: ${riser1_chip_id}
-          spi_cs_pin: ${riser1_spi_cs_pin}
           unit_name: Riser1
+      - path: packages/grpm2.atm90e32.cal.yaml
+        vars:
+          chip_id: ${riser2_chip_id}
+          unit_name: Riser2
     ref: main
     refresh: 1d
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${disp_name}
+  name_add_mac_suffix: true
+  project:
+    name: "Gelidus Research.3 Phase Expandable Power Meter"
+    version: "1.0"
+
+dashboard_import:
+  package_import_url: github://gelidusresearch/grpm2/grpm2.9c.yaml@main
+  import_full_config: true
 
 esp32:
   board: esp32-c6-devkitc-1
@@ -127,8 +152,8 @@ esp32:
     version: recommended
     sdkconfig_options:
       CONFIG_ESPTOOLPY_FLASHSIZE_4MB: y
-      CONFIG_BT_BLE_50_FEATURES_SUPPORTED: n
-      CONFIG_BT_BLE_42_FEATURES_SUPPORTED: n
+      CONFIG_BT_BLE_50_FEATURES_SUPPORTED: y
+      CONFIG_BT_BLE_42_FEATURES_SUPPORTED: y
       CONFIG_OPENTHREAD_ENABLED: n
       CONFIG_ENABLE_WIFI_STATION: y
       CONFIG_USE_MINIMAL_MDNS: n

@@ -243,7 +243,6 @@ sensor:
 #       For split phase: CT1=L1, CT2=L2
 #       Start your circuit groups with CT4 and higher
 
-sensor:
   # Mains Group - 3-Phase Total (CT1 + CT2 + CT3)
   - platform: template
     name: ${disp_name} Mains Watts

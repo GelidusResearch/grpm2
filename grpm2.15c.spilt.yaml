@@ -123,24 +123,6 @@ packages:
           phase_a_current_cal: 14200
           phase_b_current_cal: 14200
           phase_c_current_cal: 14200
-      - path: packages/grpm2.atm90e32.yaml
-        vars:
-          chip_id: ${riser5_chip_id}
-          spi_cs_pin: ${riser5_spi_cs_pin}
-          unit_name: Riser5
-          phase_a_ct_name: CT16
-          phase_b_ct_name: CT17
-          phase_c_ct_name: CT18
-          phase_a_line_name: L16
-          phase_b_line_name: L17
-          phase_c_line_name: L18
-          phase_a_voltage_cal: 4200
-          phase_b_voltage_cal: 4200
-          phase_c_voltage_cal: 4200
-          phase_a_current_cal: 14200
-          phase_b_current_cal: 14200
-          phase_c_current_cal: 14200
-
 
 #********************************************************
 # Enable calibration features for a board(s)
@@ -161,27 +143,19 @@ packages:
         vars:
           chip_id: ${riser3_chip_id}
           unit_name: Riser3
-      - path: packages/grpm2.atm90e32.cal.yaml
-        vars:
-          chip_id: ${riser4_chip_id}
-          unit_name: Riser4
-      - path: packages/grpm2.atm90e32.cal.yaml
-        vars:
-          chip_id: ${riser5_chip_id}
-          unit_name: Riser5
     ref: main
     refresh: 1d
 
 esphome:
   name: ${device_name}
   friendly_name: ${disp_name}
-  name_add_mac_suffix: true
+  name_add_mac_suffix: false
   project:
     name: "Gelidus Research.3 Phase Expandable Power Meter"
     version: "1.0"
 
 dashboard_import:
-  package_import_url: github://gelidusresearch/grpm2/grpm2.18c.yaml@main
+  package_import_url: github://gelidusresearch/grpm2/grpm2.15c.split.yaml@main
   import_full_config: true
 
 esp32:
@@ -236,24 +210,22 @@ time:
 
 sensor:
 - platform: template
-  name: ${disp_name} Total Amps
+  name: ${disp_name} Total L1+L2 Amps
   id: totalAmps                   # 3 Phase System Total Current using main board Phase A, B, C - Split Phase uses Phase A and B only
   lambda: |-
       return id(${phase_a_ct_name}Amps).state +
-             id(${phase_b_ct_name}Amps).state +
-             id(${phase_c_ct_name}Amps).state;
+             id(${phase_b_ct_name}Amps).state;
   accuracy_decimals: 2
   unit_of_measurement: A
   device_class: current
   update_interval: ${update_time}
 
 - platform: template
-  name: ${disp_name} Total Watts
+  name: ${disp_name} Total L1+L2 Watts
   id: totalWatts                  # 3 Phase System Total Power using main board Phase A, B, C - Split Phase uses Phase A and B only
   lambda: |-
       return id(${phase_a_ct_name}Watts).state +
-             id(${phase_b_ct_name}Watts).state +
-             id(${phase_c_ct_name}Watts).state;
+             id(${phase_b_ct_name}Watts).state;
   accuracy_decimals: 0
   unit_of_measurement: W
   device_class: power

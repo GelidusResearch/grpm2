@@ -50,7 +50,7 @@ esphome:
     version: "1.0"
 
 dashboard_import:
-  package_import_url: github://gelidusresearch/grpm2/grpm2.3c.split.yaml@main
+  package_import_url: github://gelidusresearch/grpm2/grpm2.6c.split.yaml@main
   import_full_config: true
 
 packages:

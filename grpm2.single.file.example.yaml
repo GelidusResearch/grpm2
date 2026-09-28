@@ -644,8 +644,10 @@ sensor:
     lambda: return id(ct1Amps).state+id(ct2Amps).state+id(ct3Amps).state+id(ct4Amps).state+id(ct5Amps).state+id(ct6Amps).state+id(ct7Amps).state+id(ct8Amps).state+id(ct9Amps).state+id(ct10Amps).state+id(ct11Amps).state+id(ct12Amps).state+id(ct13Amps).state+id(ct14Amps).state+id(ct15Amps).state+id(ct16Amps).state+id(ct17Amps).state+id(ct18Amps).state;
     accuracy_decimals: 2
     unit_of_measurement: A
-    update_interval: ${update_time}
     device_class: current
+    state_class: total
+    update_interval: ${update_time}
+
   - platform: template
     name: ${disp_name} Total Watts
     id: "totalWatts"
@@ -653,6 +655,7 @@ sensor:
     accuracy_decimals: 0
     unit_of_measurement: W
     device_class: power
+    state_class: total
     update_interval: ${update_time}
 
   - platform: total_daily_energy

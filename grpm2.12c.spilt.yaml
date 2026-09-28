@@ -234,6 +234,7 @@ sensor:
   accuracy_decimals: 2
   unit_of_measurement: A
   device_class: current
+  state_class: total
   update_interval: ${update_time}
 
 - platform: template
@@ -245,6 +246,7 @@ sensor:
   accuracy_decimals: 0
   unit_of_measurement: W
   device_class: power
+  state_class: total
   update_interval: ${update_time}
 
 - platform: total_daily_energy
